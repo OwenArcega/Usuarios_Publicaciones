@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>API</title>
+</head>
+<body>
+    <header>
+        <div>
+            <ul>
+                <a href=""><li>Mostrar usuarios</li></a>
+                <a href=""><li>Agregar usuario</li></a>
+                <a href=""><li>Buscar Usuario</li></a>
+                <a href=""><li>Mostrar Posts</li></a>
+                <a href=""><li>Obtener Post</li></a>
+            </ul>
+        </div>
+        <div>
+            <label>Usuarios:</label>
+            <select id="select-usuarios">
+            </select>
+        </div>
+    </header>
+    <section>
+        <form name="Usuarios">
+            <h2>Usuarios</h2>
+            <div>
+                <table id="tabla_usuarios">
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Street</th>
+                        <th>Suit</th> 
+                        <th>City</th>
+                        <th>Zipcode</th>  
+                        <th>Lat</th> 
+                        <th>Lng</th> 
+                        <th>Phone</th> 
+                        <th>Website</th> 
+                        <th>Company Name</th> 
+                        <th>Catch Phrase</th> 
+                        <th>Bs</th> 
+                    </tr>
+                <table>
+            </div> 
+            <div>
+                <input id="name" type="text" placeholder="Name" required>
+                <input id="username" type="text" placeholder="Username" required>
+                <input id="email" type="email" placeholder="Email" required>
+                <input id="street" type="text" placeholder="Street" required>
+                <input id="suit" type="text" placeholder="Suit" required>
+                <input id="city" type="text" placeholder="City" required>
+                <input id="zipcode" type="text" placeholder="Zipcode" required>
+                <input id="lat" type="text" placeholder="Latitude" required>
+                <input id="lng" type="text" placeholder="Longitude" required>
+                <input id="phone" type="text" placeholder="Phone" required>
+                <input id="website" type="text" placeholder="Website" required>
+                <input id="company" type="text" placeholder="Company Name" required>
+                <input id="catchphrase" type="text" placeholder="Catch Phrase" required>
+                <input id="bs" type="text" placeholder="BS" required>
+            
+                <button type="button" id="Agregar">Agregar</button>
+            </div> 
+            <div>
+                <input id="buscador" type="text" placeholder="Buscar Usuario">
+                <button type="button" id="Buscar">Buscar</button>
+            </div>
+        </form name="Posts">
+    </section>
+    <section>
+        <form>
+            <h2>Posts</h2>
+            <div>
+                <input id="user-post" placeholder="Id">
+                <button type="button" id="UsersPosts">Buscar Posts de Usuario</button>
+                <div id="resultado-user-post"></div>
+            </div>
+            <div>
+                <input id="obtain-post" placeholder="Id de Post">
+                <button id="ObtainPost" type="button">Obtener Post</button>
+                <div id="resultado-post"></div>
+            </div>
+        </form>
+    </section>
+    <footer>
+
+    </footer>
+    <script src="usuarios.js"></script>
+    <script src="datos.js"></script>
+    <script src="posts.js"></script>
+    <script>
+        const Usuarios = new Usuario();
+        $('#tabla_usuarios').append(Usuarios.listar())
+        //Menú de selección de usuario
+        $(document).ready(()=>{
+            for(let i = 0; i < Usuarios.usuarios.length; i++){
+                $("#select-usuarios").append(`<option value="${Usuarios.usuarios[i].id}">${Usuarios.usuarios[i].username}</option>`)
+            }
+            
+            $("#select-usuarios").find("option").each(()=>{
+                $(this).change(()=>{
+                    console.log($(this));
+                });
+            });
+        });
+
+        //Agregar usuario
+        const btnAgregar = $("#Agregar");
+        btnAgregar.click(()=>{
+            let id = Usuarios.usuarios[Usuarios.usuarios.length-1].id+1;
+            let name = $("#name").val();
+            let username = $("#username").val();
+            let email = $("#email").val();
+            let street = $("#street").val();
+            let suit = $("#suit").val();
+            let city = $("#city").val();
+            let zipcode = $("#zipcode").val();
+            let lat = $("#lat").val();
+            let lng = $("#lng").val();
+            let phone = $("#phone").val();
+            let website = $("#website").val();
+            let company = $("#company").val();
+            let catchphrase = $("#catchphrase").val();
+            let bs = $("#bs").val();
+            let nuevo = {
+                "id": id,
+                "name": name,
+                "username": username,
+                "email": email,
+                "address": {
+                    "street": street,
+                    "suite": suit,
+                    "city": city,
+                    "zipcode": zipcode,
+                    "geo": {
+                        "lat": lat,
+                        "lng": lng
+                    }
+                },
+                "phone": phone,
+                "website": website,
+                "company": {
+                    "name": company,
+                    "catchPhrase": catchphrase,
+                    "bs": bs
+                }
+            };
+            $('#tabla_usuarios').empty();
+            $('#tabla_usuarios').append("<tr><th>Name</th><th>Username</th><th>Email</th><th>Street</th><th>Suit</th><th>City</th><th>Zipcode</th><th>Lat</th><th>Lng</th><th>Phone</th><th>Website</th><th>Company Name</th><th>Catch Phrase</th><th>Bs</th></tr>");
+            $('#tabla_usuarios').append(Usuarios.listar())
+
+            $("#name").val("");
+            $("#username").val("");
+            $("#email").val("");
+            $("#street").val("");
+            $("#suit").val("");
+            $("#city").val("");
+            $("#zipcode").val("");
+            $("#lat").val("");
+            $("#lng").val("");
+            $("#phone").val("");
+            $("#website").val("");
+            $("#company").val("");
+            $("#catchphrase").val("");
+            $("#bs").val("");
+        });
+
+        //Buscar Usuario
+        $("#Buscar").click(()=>{
+            let usuario = $("#buscador").val();
+            let resultado = Usuarios.buscar(usuario);
+            if(resultado === null){
+                alert("Sin coincidencias");
+                $("#buscador").val("");
+            } else{
+                $("#name").val(resultado.name);
+                $("#username").val(resultado.username);
+                $("#email").val(resultado.email);
+                $("#street").val(resultado.address.street);
+                $("#suit").val(resultado.address.suite);
+                $("#city").val(resultado.address.city);
+                $("#zipcode").val(resultado.address.zipcode);
+                $("#lat").val(resultado.address.geo.lat);
+                $("#lng").val(resultado.address.geo.lng);
+                $("#phone").val(resultado.phone);
+                $("#website").val(resultado.website);
+                $("#company").val(resultado.company.name);
+                $("#catchphrase").val(resultado.company.catchPhrase);
+                $("#bs").val(resultado.company.bs);
+            }
+
+        });
+    </script>
+    <script>
+        const publicaciones = new Posts();
+        //Publicaciones de Usuario
+        $("#UsersPosts").click(()=>{
+            let usuarioId = $("#user-post").val();
+            if(usuarioId == ""){
+                $("#resultado-user-post").text("Shrek");
+            }
+            let resultado = publicaciones.PostsUsuario(usuarioId);
+            if(resultado.length == 0){
+                $("#resultado-user-post").text("Sin Registros");
+            } else{
+                $("#resultado-user-post").empty();
+                for(let i = 0; i < resultado.length; i++){
+                    $("#resultado-user-post").append(`${i+1}. <strong>${resultado[i].title}</strong><p>${resultado[i].body}</p>`);
+                }
+            }
+        });
+
+        //Obtener publicaciones por ID
+        $("#ObtainPost").click(()=>{
+            let postId = $("#obtain-post").val();
+            let resultado = publicaciones.obtenerPost(postId);
+            if(resultado === null){
+                $("#resultado-post").text("Sin Registros");
+            } else{
+                $("#resultado-post").empty();
+                $("#resultado-post").append(`<strong>${resultado.title}</strong><p>${resultado.body}</p>`);
+            }
+        });
+    </script>
+</body>
+</html>
